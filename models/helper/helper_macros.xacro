@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <xacro:macro name="square_prism_origin" params="length height centered">
+        <xacro:if value="${centered}">
+            <origin xyz="${length/2} 0 0"/>
+        </xacro:if>
+
+        <xacro:unless value="${centered}">
+            <origin xyz="${length/2} 0 ${height/2}"/>
+        </xacro:unless>
+    </xacro:macro>
+
+</robot>

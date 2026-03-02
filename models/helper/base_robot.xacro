@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" xmlns="http://drake.mit.edu">
+
+    <xacro:include filename="inertial_macros.xacro"/>
+    <xacro:include filename="visual_macros.xacro"/>
+
+    <xacro:property name="shoulder_radius" value="${.18/2}" />
+    <xacro:property name="shoulder_height" value=".1615" />
+
+    <xacro:property name="upperarm_length" value=".301625" />
+    <xacro:property name="upperarm_height" value="0.070471" />
+    <xacro:property name="upperarm_mass" value="0.982" />
+
+    <xacro:property name="forearm_length" value=".268224" />
+    <xacro:property name="forearm_height" value=".02545" />
+    <xacro:property name="forearm_mass" value="0.6" />
+
+    <xacro:property name="handle_length" value="0.035" />
+    <xacro:property name="handle_height" value="0.01" /> 
+    <xacro:property name="handle_mass" value="0.058" />
+
+    <link name="base_link"></link>    
+    
+    <joint name="odrive_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="odrive_base"/>
+    </joint>
+
+    <link name="odrive_base">
+        <xacro:mycylinder radius="${shoulder_radius}" height="${shoulder_height}">
+            <material name="blue">
+                <color rgba="0 0 1 1" />
+            </material>
+            <origin xyz="0 0 ${shoulder_height/2}"/>
+        </xacro:mycylinder>
+    </link>
+
+    <joint name="shoulder" type="revolute">
+        <parent link="odrive_base"/>
+        <child link="upperarm"/>
+        <origin xyz="0 0 ${shoulder_height}"/>
+        <axis xyz="0 0 1" />
+        <limit upper="${pi}" lower="-${pi}"/>
+        <!-- drake:acceleration="8.57"  -->
+        <dynamics damping="0.1"/>
+    </joint>
+
+    <link name="upperarm">
+        <xacro:square_prism length="${upperarm_length}" height="${upperarm_height}" centered="false">
+            <material name="green">
+                <color rgba="0 1 0 1" />
+            </material>
+        </xacro:square_prism>
+        <xacro:square_prism_inertial mass="${upperarm_mass}" length="${upperarm_length}" height="${upperarm_height}" centered="false"/>
+    </link>
+
+    <joint name="elbow" type="revolute">
+        <parent link="upperarm"/>
+        <child link="forearm"/>
+        <origin xyz="${upperarm_length} 0 ${upperarm_height}"/>
+        <axis xyz="0 0 1" />
+        <limit upper="${3*pi/4}" lower="-${3*pi/4}"/>
+        <dynamics damping="0.1"/>
+    </joint>
+
+    <link name="forearm">
+        <xacro:square_prism length="${forearm_length}" height="${forearm_height}" centered="false">
+            <material name="red">
+                <color rgba="1 0 0 1" />
+            </material>
+        </xacro:square_prism>
+        <xacro:square_prism_inertial mass="${forearm_mass}" length="${forearm_length}" height="${forearm_height}" centered="false"/>
+    </link>
+
+    <joint name="wrist_orbit" type="revolute">
+        <parent link="forearm"/>
+        <child link="handle"/>
+        <origin xyz="${forearm_length} 0 ${forearm_height}" rpy="0 0 0"/>
+        <axis xyz="0 0 1" />
+        <limit upper="${pi/2}" lower="-${pi/2}"/>
+        <dynamics damping="0.1"/>
+    </joint>
+
+    <link name="handle">
+        <xacro:square_prism length="${handle_length}" height="${handle_height}" centered="false">
+            <material name="red">
+                <color rgba="1 0 0 1" />
+            </material>
+        </xacro:square_prism>
+        <xacro:square_prism_inertial mass="${handle_mass}" length="${handle_length}" height="${handle_height}" centered="false"/>
+    </link>
+
+    <transmission type="SimpleTransmission" name="shoulder_torque">
+        <actuator name="shoulder_input" />
+        <joint name="shoulder" />
+    </transmission>
+
+    <transmission type="SimpleTransmission" name="elbow_torque">
+        <actuator name="elbow_input" />
+        <joint name="elbow" />
+    </transmission>
+
+    <transmission type="SimpleTransmission" name="wrist_spin_torque">
+        <actuator name="wrist_orbit_input" />
+        <joint name="wrist_orbit" />
+    </transmission>
+
+</robot>

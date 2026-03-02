@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <xacro:include filename="helper_macros.xacro"/>
+
+    <!-- https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
+    <xacro:macro name="square_prism_inertial" params="mass length height centered">
+        <inertial>
+            <mass value="${mass}"/>
+            <!-- In the Articulated Robot video, his xyz here is x, 0, z. Why? -->
+            <xacro:square_prism_origin length="${length}" height="${height}" centered="${centered}"/>
+            <inertia
+                ixx="${1/12 * mass * (2 * height*height)}"
+                iyy="${1/12 * mass * (length*length + height*height)}"
+                izz="${1/12 * mass * (length*length + height*height)}"
+                ixy="0.0"
+                ixz="0.0"
+                iyz="0.0"
+            />
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="sphere_inertial" params="mass radius">
+        <inertial>
+            <mass value="${mass}"/>
+            <inertia
+                ixx="${2/5 * mass * radius * radius}"
+                iyy="${2/5 * mass * radius * radius}"
+                izz="${2/5 * mass * radius * radius}"
+                ixy="0.0"
+                ixz="0.0"
+                iyz="0.0"
+            />
+            <origin xyz="${radius} 0 0" rpy="0 0 0"/>
+        </inertial>
+    </xacro:macro>
+
+</robot>

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <xacro:include filename="helper_macros.xacro"/>
+
+    <xacro:macro name="square_prism" params="length height centered *material">
+        <visual>
+            <geometry>
+                <box size="${length} ${height} ${height}"/>
+            </geometry>
+            <xacro:square_prism_origin length="${length}" height="${height}" centered="${centered}"/>
+            <xacro:insert_block name="material"/>
+        </visual>
+        <!-- <collision>
+            <geometry>
+                <box size="${length} ${height} ${height}"/>
+            </geometry>
+            <origin xyz="0 ${length/2} ${height/2}" />
+        </collision> -->
+    </xacro:macro>
+
+    <xacro:macro name="mycylinder" params="radius height *material *origin">
+        <visual>
+            <geometry>
+                <cylinder length="${height}" radius="${radius}"/>
+            </geometry>
+            <xacro:insert_block name="material"/>
+            <xacro:insert_block name="origin"/>
+        </visual>
+        <!-- <collision>
+            <geometry>
+                <cylinder length="${height}" radius="${radius}"/>
+            </geometry>
+            <origin xyz="0 0 ${height/2}"/>
+        </collision> -->
+    </xacro:macro>
+
+    <xacro:macro name="mysphere" params="radius *material">
+        <visual>
+            <geometry>
+                <sphere radius="${radius}"/>
+            </geometry>
+            <xacro:insert_block name="material"/>
+            <origin xyz="${radius} 0 0" rpy="0 0 0"/>
+        </visual>
+        <!-- <collision>
+            <geometry>
+                <cylinder length="${height}" radius="${radius}"/>
+            </geometry>
+            <origin xyz="0 ${radius} 0" rpy="0 ${pi/2} 0"/>
+        </collision> -->
+    </xacro:macro>
+
+
+
+</robot>
